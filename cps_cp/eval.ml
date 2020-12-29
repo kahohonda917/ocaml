@@ -4,32 +4,9 @@ open Target
 (* DS version *)
 let idt = TId
 
-(* let rec cons cont trail = match trail with
- *     Nil -> cont
- *   | Trail(k) -> fun v -> fun t' -> cont v (Trail (cons k  t'))
- * 
- * let at trail trail2 = match trail with
- *     Nil -> trail2
- *   | Trail(k) -> Trail(cons k trail2) *)
-
-  
-(* let idk v t =
- *   let k = Gensym.f "k" in
- *   TMatch(t, v, k, TApp(TVar(k), TApp(v, TId))) *)
-
 let idk = fun v -> fun t -> TIdk(v,t)
 
 
-(* let rec cons k t =
- *   (\* let v = Gensym.f "v" in *\)
- *   let k' = Gensym.f "k'" in
- *   (\* let t' = Gensym.f "t'" in *\)
- *   TMatch(t,  k,  k',
- *          TVar("k v (k' :: t'"))
- * let at t t' =
- *   (\* let k = Gensym.f "k" in *\)
- *   TMatch(t, t', "k",  (TVar ("k' :: t'"))) *)
-  
 exception Term_error
 let rec term t env  = match t with
     Number (n) -> fun k -> fun t -> k (TNum (n)) t
@@ -48,7 +25,7 @@ let rec term t env  = match t with
     let k' = Gensym.f "k'" in
     let t' = Gensym.f "t'" in
     fun k -> fun t -> k (TFun (x, TFun(k', TFun(t', (term e env)
-                                      (fun v -> fun t'' -> TApp(TApp((TVar (k')),v), t'')) (TVar (t')))))) t
+                                      (fun v -> fun t'' -> TApp(TApp((TVar (k')), v), t'')) (TVar (t')))))) t
         
   | App (t1, t2) ->
     let v = Gensym.f "v" in
@@ -58,7 +35,7 @@ let rec term t env  = match t with
              TLet(v, TApp(v1, v2), k (TVar(v)) t2)) t1) t
 
 
-(* k=TFun(v, TFun(t'', TApp(k, TApp((TVar (v)), (TVar (t'')))))) *)
+
   | Control (c, e) ->
     let x= Gensym.f "x" in
     let k' = Gensym.f "k'" in
@@ -80,6 +57,6 @@ let rec term t env  = match t with
 
 
 
-(* Eval.f : Syntax.t -> Syntax.t *)
+(* Eval.f *)
 let f program  = term program Env.empty_env idk idt
 
